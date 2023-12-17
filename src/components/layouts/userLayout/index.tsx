@@ -28,6 +28,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
       {
         id: 3,
         name: "Airflow",
+        link: "http://localhost:8082",
       },
       {
         id: 4,
@@ -47,7 +48,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
       {
         id: 7,
         name: "Dspace",
-        link: "http://localhost:4000",
+        link: "https://sandbox.dspace.org/login",
       },
     ],
     []
