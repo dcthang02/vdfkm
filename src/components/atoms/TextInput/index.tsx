@@ -11,6 +11,7 @@ const TextInput = (
     <div>
       <p className="font-semibold text-black">{label}</p>
       <input
+        required
         className="px-1 py-2 outline-none border border-[#7f9db9] focus:border-blue-600 w-full bg-slate-100"
         type={type}
         ref={ref}

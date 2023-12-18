@@ -1,50 +1,58 @@
 import TextInput from "@/components/atoms/TextInput";
+import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
 import React, { FormEvent, useCallback, useContext, useRef } from "react";
-import { AuthContext } from "@/context/AuthContext";
 
-const AuthForm = () => {
+const SignupForm = () => {
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const cfPasswordRef = useRef<HTMLInputElement>(null);
 
-  const { login } = useContext(AuthContext);
+  const { signup } = useContext(AuthContext);
 
-  // Đăng nhập
-  const handleLogin = useCallback(
+  const handleSignup = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      login(usernameRef.current?.value || "", passwordRef.current?.value || "");
+      if (passwordRef.current?.value === cfPasswordRef.current?.value)
+        signup(
+          usernameRef.current?.value as string,
+          passwordRef.current?.value as string
+        );
     },
-    [usernameRef, passwordRef, login]
+    [usernameRef, passwordRef, cfPasswordRef]
   );
-
   return (
     <form
-      className="border h-[400px] bg-[#f1f1f1] border-[#c5c5c5]"
-      onSubmit={handleLogin}
+      className="border bg-[#f1f1f1] border-[#c5c5c5]"
+      onSubmit={handleSignup}
     >
       <div className="w-full left-0 top-0 p-4 ">
         <div className="py-2 border-b mb-4 text-lg uppercase text-[#007f49] font-bold">
-          Đăng nhập
+          Đăng ký
         </div>
         <div className="px-4 flex flex-col gap-4">
           <TextInput label="Tên đăng nhập" ref={usernameRef} />
           <TextInput label="Mật khẩu" type="password" ref={passwordRef} />
-          <div className="flex justify-end mt-16 pb-2">
+          <TextInput
+            label="Nhập lại mật khẩu"
+            type="password"
+            ref={cfPasswordRef}
+          />
+          <div className="flex justify-end pb-2">
             <button
               type="submit"
               className="px-10 py-2 bg-slate-300 font-medium text-black cursor-pointer hover:bg-slate-400 hover:text-white"
             >
-              <p>Đăng nhập</p>
+              <p>Đăng Ký</p>
             </button>
           </div>
           <div className="flex gap-2">
-            <p>Chưa có tài khoản?</p>
+            <p>Đã có tài khoản?</p>
             <Link
               className="text-blue-400 hover:text-blue-500"
-              href={"/auth/signup"}
+              href={"/auth/login"}
             >
-              Đăng ký ngay
+              Đăng nhập
             </Link>
           </div>
         </div>
@@ -53,4 +61,4 @@ const AuthForm = () => {
   );
 };
 
-export default AuthForm;
+export default SignupForm;
