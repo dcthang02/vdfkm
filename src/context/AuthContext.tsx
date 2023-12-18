@@ -22,6 +22,8 @@ export const AuthContext = createContext({
   token: "",
   setToken: (x: string) => {},
   login: (username: string, password: string) => {},
+  signup: (username: string, password: string) => {},
+  logout: () => {},
 });
 
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
@@ -30,54 +32,82 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-
-    if (accessToken) {
-      router.replace("/");
-    } else {
-      router.replace("/auth/login");
-    }
-  }, [token]);
-
-  const login = useCallback(async (username: string, password: string) => {
-    try {
-      const res = await fetch("http://localhost:3001/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      });
-      const authData = await res.json();
-      localStorage.setItem("accessToken", authData.accessToken);
-      setToken(authData.accessToken);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
-  const isAuthPage = useMemo(
-    () => router.asPath.includes("/auth"),
-    [router.asPath]
+  const login = useCallback(
+    async (username: string, password: string) => {
+      try {
+        const res = await fetch("http://localhost:3001/auth/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        });
+        const authData = await res.json();
+        if (authData.accessToken) {
+          localStorage.setItem("accessToken", authData.accessToken);
+          localStorage.setItem("username", username);
+          router.replace("/");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [router]
   );
 
-  useEffect(() => {
-    setAuthChecking(true);
-  }, [router.asPath]);
+  const signup = useCallback(
+    async (username: string, password: string) => {
+      try {
+        const res = await fetch("http://localhost:3001/auth/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        });
+        const authData = await res.json();
+        if (authData.accessToken) {
+          localStorage.setItem("accessToken", authData.accessToken);
+          localStorage.setItem("username", username);
+          router.replace("/");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [router]
+  );
+
+  const logout = useCallback(() => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("username");
+    router.replace("/auth/login");
+  }, [router]);
 
   useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      setAuthChecking(true);
+      setToken(accessToken);
+      if (router.asPath.includes("auth")) router.replace("/");
+    } else {
+      setToken("");
+      if (!router.asPath.includes("signup")) router.replace("/auth/login");
+    }
     delay(1000).then(() => setAuthChecking(false));
-  }, [isAuthPage]);
+  }, [router.asPath]);
 
   if (authChecking) return null;
 
   return (
-    <AuthContext.Provider value={{ token, setToken, login }}>
-      {isAuthPage ? (
+    <AuthContext.Provider value={{ token, setToken, login, signup, logout }}>
+      {!token ? (
         <AuthLayout>{children}</AuthLayout>
       ) : (
         <UserLayout>{children}</UserLayout>
