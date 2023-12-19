@@ -32,11 +32,12 @@ const SignupForm = () => {
         </div>
         <div className="px-4 flex flex-col gap-4">
           <TextInput label="Tên đăng nhập" ref={usernameRef} />
-          <TextInput label="Mật khẩu" type="password" ref={passwordRef} />
+          <TextInput label="Mật khẩu" type="password" ref={passwordRef} eye />
           <TextInput
             label="Nhập lại mật khẩu"
             type="password"
             ref={cfPasswordRef}
+            eye
           />
           <div className="flex justify-end pb-2">
             <button

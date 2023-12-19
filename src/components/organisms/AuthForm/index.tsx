@@ -29,7 +29,7 @@ const AuthForm = () => {
         </div>
         <div className="px-4 flex flex-col gap-4">
           <TextInput label="Tên đăng nhập" ref={usernameRef} />
-          <TextInput label="Mật khẩu" type="password" ref={passwordRef} />
+          <TextInput label="Mật khẩu" type="password" ref={passwordRef} eye />
           <div className="flex justify-end mt-16 pb-2">
             <button
               type="submit"
